@@ -1,7 +1,7 @@
 const asyncHandler = require('express-async-handler')
 const userModel = require('../model/userModel')
 const exerciseModel = require('../model/exerciseModel')
-const logModel = require('../model/logModel')
+//const logModel = require('../model/logModel')
 //@desc POST /api/user
 // create user
 
@@ -13,17 +13,16 @@ const createUser= asyncHandler(async(req,res)=>{
 
     const newUser = await userModel.create({username: req.body.username})
 
-    const log = await logModel.create({
-        user: newUser._id,
-        count: 0,
-        log: []
-    })
+    // const log = await logModel.create({
+    //     user: newUser._id,
+    //     count: 0,
+    //     log: []
+    // })
 
     const {username, _id} = newUser;
     return res.json({
         username,
-        _id,
-        log
+        _id
     })
 })
 
@@ -54,9 +53,9 @@ const createExercise = asyncHandler(async(req,res)=>{
         date
     })
     
-    const logUpdate = await logModel.findOneAndUpdate({user: req.params._id},{$inc:{count:1},
-        $push:{log: exercise._id}}
-    )
+    // const logUpdate = await logModel.findOneAndUpdate({user: req.params._id},{$inc:{count:1},
+    //     $push:{log: exercise._id}}
+    // )
 
     const {description,duration} = exercise;
     const {username,_id} = user
@@ -111,12 +110,12 @@ const getlogs = asyncHandler(async(req,res)=>{
         return res.json({error: "user does not exist" });
     }
 
-    let exercises = await exerciseModel.find(findConditions).limit(limit)
+    let exercises = await exerciseModel.find(findConditions).sort({date:1}).limit(limit)
     exercises = exercises.map((exercise)=>{
         return {
             description: exercise.description,
             duration: exercise.duration,
-            date: new Date(exercise.date),
+            date: exercise.date.toDateString(),
         }
     })
 
