@@ -110,7 +110,7 @@ const getlogs = asyncHandler(async(req,res)=>{
         return res.json({error: "user does not exist" });
     }
 
-    let exercises = await exerciseModel.find(findConditions).sort({date:1}).limit(limit)
+    let exercises = await exerciseModel.find(findConditions).limit(limit)
     exercises = exercises.map((exercise)=>{
         return {
             description: exercise.description,
